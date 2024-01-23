@@ -25,6 +25,10 @@ public class BookRepository {
                 new Book("Отцы и Дети")));
     }
 
+    public List<Book> getAll() {
+        return List.copyOf(books);
+    }
+
     public Book getById(long id) {
         return books.stream()
                 .filter(it -> it.getId() == id)

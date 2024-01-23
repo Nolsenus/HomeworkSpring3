@@ -25,6 +25,10 @@ public class ReaderRepository {
                 new Reader("Саша")));
     }
 
+    public List<Reader> getAll() {
+        return List.copyOf(readers);
+    }
+
     public Reader getById(long id) {
         return readers.stream()
                 .filter(it -> it.getId() == id)

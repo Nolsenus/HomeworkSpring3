@@ -11,6 +11,9 @@ public class IssueRepository {
 
     private final List<Issue> issues = new ArrayList<>();
 
+    public List<Issue> getAll() {
+        return List.copyOf(issues);
+    }
 
     public Issue getById(long id) {
         return issues.stream()

@@ -2,8 +2,7 @@ package homework3.api;
 
 import homework3.model.Issue;
 import homework3.model.Reader;
-import homework3.repository.IssueRepository;
-import homework3.repository.ReaderRepository;
+import homework3.services.ReaderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +15,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReaderController {
 
-    private final ReaderRepository readerRepository;
-    private final IssueRepository issueRepository;
+    private final ReaderService readerService;
 
     @GetMapping("/{id}")
     public ResponseEntity<Reader> getReaderByID(@PathVariable long id) {
-        Reader reader = readerRepository.getById(id);
+        Reader reader = readerService.get(id);
         if (reader == null) {
             return ResponseEntity.notFound().build();
         }
@@ -30,7 +28,7 @@ public class ReaderController {
 
     @GetMapping("/{id}/issues")
     public ResponseEntity<List<Issue>> getIssuesOfReader(@PathVariable long id) {
-        List<Issue> issues = issueRepository.getByReaderId(id);
+        List<Issue> issues = readerService.getIssuesOfReader(id);
         if (issues.size() == 0) {
             return ResponseEntity.noContent().build();
         }
@@ -39,12 +37,12 @@ public class ReaderController {
 
     @DeleteMapping("/{id}")
     public boolean deleteReaderByID(@PathVariable long id) {
-        return readerRepository.remove(id);
+        return readerService.delete(id);
     }
 
     @PostMapping
     public ResponseEntity<Reader> postReader(@RequestBody Reader reader) {
-        if (readerRepository.add(reader)) {
+        if (readerService.add(reader)) {
             return ResponseEntity.status(HttpStatus.CREATED).body(reader);
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

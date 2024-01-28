@@ -1,56 +1,16 @@
 package homework3.repository;
 
 import homework3.model.Reader;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+public interface ReaderRepository extends JpaRepository<Reader, Long> {
 
-@Repository
-public class ReaderRepository {
+    Reader getById(long id);
 
-    private final List<Reader> readers;
+    boolean existsById(long id);
 
-    public ReaderRepository() {
-        readers  = new ArrayList<>();
-        fillWithData();
-    }
-
-    private void fillWithData() {
-        readers.addAll(List.of(
-                new Reader("Игорь"),
-                new Reader("Олег"),
-                new Reader("Анна"),
-                new Reader("Елизавета"),
-                new Reader("Саша")));
-    }
-
-    public List<Reader> getAll() {
-        return List.copyOf(readers);
-    }
-
-    public Reader getById(long id) {
-        return readers.stream()
-                .filter(it -> it.getId() == id)
-                .findFirst()
-                .orElse(null);
-    }
-
-    public boolean hasId(long id) {
-        return readers.stream().anyMatch(it -> it.getId() == id);
-    }
-
-    public boolean remove(Reader reader) {
-        return readers.remove(reader);
-    }
-
-    public boolean remove(long id) {
-        Reader found = getById(id);
-        return found != null && readers.remove(found);
-    }
-
-    public boolean add(Reader reader) {
-        return readers.add(reader);
-    }
+    @Transactional
+    void removeById(long id);
 
 }

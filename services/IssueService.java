@@ -8,7 +8,6 @@ import homework3.repository.ReaderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
@@ -26,17 +25,17 @@ public class IssueService {
     public Issue issue(IssueRequest request) {
         long bookId = request.getBookId();
         long readerId = request.getReaderId();
-        if (!bookRepository.hasId(bookId)) {
+        if (!bookRepository.existsById(bookId)) {
             throw new NoSuchElementException(String.format("Не найдена книга с Id %d", bookId));
         }
-        if (!readerRepository.hasId(readerId)) {
+        if (!readerRepository.existsById(readerId)) {
             throw new NoSuchElementException(String.format("Не найден читатель с Id %d", readerId));
         }
-        if (issueRepository.numberOfBooksOnReaderId(readerId) >= MAX_BOOKS) {
+        if (issueRepository.countByReaderID(readerId) >= MAX_BOOKS) {
             throw new RuntimeException(String.format("У читателя с Id %d слишком много невозвращённых книг", readerId));
         }
         Issue issue = new Issue(bookId, readerId);
-        issueRepository.add(issue);
+        issueRepository.save(issue);
         return issue;
     }
 
@@ -45,11 +44,12 @@ public class IssueService {
     }
 
     public Issue close(long id) {
-        if (!issueRepository.hasId(id)) {
+        if (!issueRepository.existsById(id)) {
             throw new NoSuchElementException(String.format("Не найдена выдача с Id %d", id));
         }
         Issue issue = issueRepository.getById(id);
         issue.close(LocalDateTime.now());
+        issueRepository.save(issue);
         return issue;
     }
 }

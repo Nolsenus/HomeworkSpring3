@@ -3,7 +3,9 @@ package homework3.api;
 
 import homework3.model.Issue;
 import homework3.services.IssueService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,7 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("/issue")
 @RequiredArgsConstructor
+@Slf4j
 public class IssueController {
 
     private final IssueService issueService;
@@ -41,10 +44,14 @@ public class IssueController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Issue> getIssue(@PathVariable long id) {
-        Issue issue = issueService.get(id);
-        if (issue== null) {
-            return ResponseEntity.notFound().build();
+        try {
+            Issue issue = issueService.get(id);
+            if (!issue.failedToGetData()) {
+                return ResponseEntity.status(HttpStatus.OK).body(issue);
+            }
+        } catch (EntityNotFoundException e) {
+            log.info(e.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.OK).body(issue);
+        return ResponseEntity.notFound().build();
     }
 }

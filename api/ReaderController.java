@@ -3,7 +3,9 @@ package homework3.api;
 import homework3.model.Issue;
 import homework3.model.Reader;
 import homework3.services.ReaderService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,17 +15,22 @@ import java.util.List;
 @RestController
 @RequestMapping("/reader")
 @RequiredArgsConstructor
+@Slf4j
 public class ReaderController {
 
     private final ReaderService readerService;
 
     @GetMapping("/{id}")
     public ResponseEntity<Reader> getReaderByID(@PathVariable long id) {
-        Reader reader = readerService.get(id);
-        if (reader == null) {
-            return ResponseEntity.notFound().build();
+        try {
+            Reader reader = readerService.get(id);
+            if (!reader.failedToGetData()) {
+                return ResponseEntity.status(HttpStatus.OK).body(reader);
+            }
+        } catch (EntityNotFoundException e) {
+            log.info(e.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.OK).body(reader);
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/{id}/issues")
@@ -42,9 +49,11 @@ public class ReaderController {
 
     @PostMapping
     public ResponseEntity<Reader> postReader(@RequestBody Reader reader) {
-        if (readerService.add(reader)) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(reader);
+        try {
+            Reader result = readerService.add(reader);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 }

@@ -1,7 +1,6 @@
 package homework3.services;
 
 import homework3.model.Book;
-import homework3.model.Issue;
 import homework3.model.Reader;
 import homework3.repository.BookRepository;
 import homework3.repository.IssueRepository;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
@@ -23,19 +21,19 @@ public class UIService {
     private final IssueRepository issueRepository;
 
     public List<String> getBookStrings() {
-        return bookRepository.getAll().stream()
+        return bookRepository.findAll().stream()
                 .map(Book::toString)
                 .toList();
     }
 
     public List<String> getReaderStrings() {
-        return readerRepository.getAll().stream()
+        return readerRepository.findAll().stream()
                 .map(Reader::toString)
                 .toList();
     }
 
     public List<List<String>> getIssues() {
-        return issueRepository.getAll().stream()
+        return issueRepository.findAll().stream()
                 .map(it -> {
                     List<String> res = new ArrayList<>();
                     res.add(bookRepository.getById(it.getBookID()).toString());
@@ -56,7 +54,7 @@ public class UIService {
     }
 
     public List<String> getBookStringsOfReader(long id) {
-        return issueRepository.getByReaderId(id).stream()
+        return issueRepository.getByReaderID(id).stream()
                 .filter(it -> it.getReturnedAt() == null)
                 .map(it -> bookRepository.getById(it.getBookID()).toString())
                 .toList();

@@ -26,6 +26,9 @@ public class ReaderService {
     }
 
     public List<Issue> getIssuesOfReader(long id) {
+        if (!readerRepository.existsById(id)) {
+            return null;
+        }
         return issueRepository.getByReaderID(id);
     }
 

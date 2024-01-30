@@ -2,6 +2,7 @@ package homework3.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +19,11 @@ public class Book {
     private static long sequence = 1L;
 
     @Id
+    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private final long id;
 
     @Column(name = "name")
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private final String name;
 
     @JsonCreator

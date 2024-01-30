@@ -1,0 +1,9 @@
+application:
+  issue:
+    max-allowed-books: 5
+spring:
+  datasource:
+    url: jdbc:h2:mem:library
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver

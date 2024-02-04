@@ -1,7 +1,6 @@
 package homework3.api;
 
-import homework3.model.Book;
-import homework3.model.Issue;
+
 import homework3.services.UIService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
